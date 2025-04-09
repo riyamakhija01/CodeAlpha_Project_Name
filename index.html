@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Music Player</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    .player {
+      max-width: 500px;
+      margin: 40px auto;
+      background: #1c1c2e;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      padding: 20px;
+    }
+    .controls button {
+      background: #28a745;
+      border: none;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .controls button:hover {
+      background: #218838;
+    }
+    .volume-control {
+      margin-top: 10px;
+    }
+    input[type="range"] {
+      width: 100%;
+    }
+    .playlist {
+      margin-top: 20px;
+    }
+    .playlist-item {
+      padding: 10px;
+      border-bottom: 1px solid #333;
+      cursor: pointer;
+    }
+    .playlist-item:hover {
+      background: #2e2e4e;
+    }
+    .search {
+      margin-bottom: 10px;
+    }
+    .search input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="player">
+    <h2>Web Music Player</h2>
+    <div class="search">
+      <input type="text" id="search" placeholder="Search music...">
+    </div>
+    <div class="controls">
+      <button onclick="playSong()">Play</button>
+      <button onclick="pauseSong()">Pause</button>
+      <button onclick="skipSong()">Skip</button>
+    </div>
+    <div class="volume-control">
+      <label>Volume:</label>
+      <input type="range" id="volume" min="0" max="1" step="0.01" onchange="setVolume(this.value)" />
+    </div>
+    <div class="playlist" id="playlist"></div>
+    <audio id="audio" preload="auto"></audio>
+  </div>
+
+  <script>
+    const songs = [
+      { title: "Sunrise Chill", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", category: "Ambient" },
+      { title: "Epic Adventure", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", category: "Cinematic" },
+      { title: "Downtown Funk", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", category: "Funk" },
+      { title: "Smooth Vibes", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3", category: "Jazz" },
+      { title: "Late Night Coding", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3", category: "Lo-fi" }
+    ];
+
+    let currentSongIndex = 0;
+    const audio = document.getElementById('audio');
+    const playlistDiv = document.getElementById('playlist');
+    const searchInput = document.getElementById('search');
+
+    function loadPlaylist(filter = '') {
+      playlistDiv.innerHTML = '';
+      songs.filter(song => song.title.toLowerCase().includes(filter.toLowerCase())).forEach((song, index) => {
+        const div = document.createElement('div');
+        div.className = 'playlist-item';
+        div.innerText = `${song.title} [${song.category}]`;
+        div.onclick = () => {
+          currentSongIndex = index;
+          playSong();
+        };
+        playlistDiv.appendChild(div);
+      });
+    }
+
+    function playSong() {
+      audio.src = songs[currentSongIndex].url;
+      audio.play();
+    }
+
+    function pauseSong() {
+      audio.pause();
+    }
+
+    function skipSong() {
+      currentSongIndex = (currentSongIndex + 1) % songs.length;
+      playSong();
+    }
+
+    function setVolume(value) {
+      audio.volume = value;
+    }
+
+    searchInput.addEventListener('input', () => {
+      loadPlaylist(searchInput.value);
+    });
+
+    // Initial load
+    loadPlaylist();
+  </script>
+</body>
+</html>
